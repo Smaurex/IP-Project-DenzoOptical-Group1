@@ -1,0 +1,25 @@
+<?php
+	session_start();
+	if(isset($_SESSION["role"]) && $_SESSION["role"]=="doctor")
+	{
+		echo "<h1>Doctor page</h1>";
+	}
+	else
+	{
+		header("Location: homePage.html");
+	}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css"/>
+    <title>Doctor Page</title>
+</head>
+<body>
+    <div class="centerText">
+        <h1 >Welcome Doctor!</h1>
+    </div>
+</body>
+</html>
