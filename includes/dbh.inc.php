@@ -15,7 +15,7 @@ $conn = null;
 if (strpos($url, "https://denzo.dcism.org") === 0) {
     $dbServer = "localhost";
     $dbUsername = "s22102454_denzo";
-    $dbPassword = "Faramir20."; 
+    $dbPassword = "Denz0DB2026."; 
     $dbName = "s22102454_denzo";
     
     // Create connection
