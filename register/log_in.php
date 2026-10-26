@@ -5,7 +5,7 @@
 <main class="centerbody" style="background-image: url('../images/glasses3.jpg'); background-repeat: no-repeat; background-size: cover; background-position: center;">
     <section class="login-row">
         <div class="flex-container-login">
-            <form class="flex-form-login" id="formLogin" action="../includes/log_in.inc.php" method="post">
+            <form class="flex-form-login" id="formLogin" method="post">
             <h3> Log in! </h3>    
             <div class="input-control">
                     <label for="emailLogin"><b>Email</b></label>
@@ -47,4 +47,5 @@
   
     }
 </script>
-
+<script src="../js/api.js"></script>
+<script src="../login.js"></script>
