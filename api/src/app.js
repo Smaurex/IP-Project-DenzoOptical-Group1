@@ -9,6 +9,7 @@ const pool = require('./config/db');
 const { errorHandler, notFound } = require('./middleware/errorHandler');
 const authRoutes = require('./routes/auth.routes');
 const usersRoutes = require('./routes/users.routes');
+const itemsRoutes = require('./routes/items.routes');
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use(morgan('dev'));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRoutes);
+app.use('/api/items', itemsRoutes);
 
 app.get('/api/health', async (req, res) => {
   try {
