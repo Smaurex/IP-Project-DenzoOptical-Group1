@@ -6,6 +6,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const pool = require('./config/db');
+const { errorHandler, notFound } = require('./middleware/errorHandler');
 
 const app = express();
 
@@ -38,5 +39,8 @@ app.get('/api/health', async (req, res) => {
     });
   }
 });
+
+app.use(notFound);
+app.use(errorHandler);
 
 module.exports = app;
