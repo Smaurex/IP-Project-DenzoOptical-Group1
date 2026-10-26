@@ -1,7 +1,8 @@
 const bcrypt = require('bcryptjs');
 const pool = require('../config/db');
 
-const userColumns = 'userID, username, email, role, profile_pic_id';
+const userColumns =
+  'userID, username, email, role, profile_pic_originalName, profile_pic_id';
 
 async function findByEmail(email) {
   const [rows] = await pool.execute(
@@ -40,6 +41,36 @@ async function findById(userID) {
   return row ? toPublicUser(row) : null;
 }
 
+async function findProfileByEmail(email) {
+  const [rows] = await pool.execute(
+    `SELECT ${userColumns} FROM users WHERE email = ? LIMIT 1`,
+    [email]
+  );
+  return rows[0] || null;
+}
+
+async function updateProfilePicture(email, originalName, imageId) {
+  await pool.execute(
+    `UPDATE users
+     SET profile_pic_originalName = ?, profile_pic_id = ?
+     WHERE email = ?`,
+    [originalName, imageId, email]
+  );
+  const user = await findProfileByEmail(email);
+  return user ? toPublicUser(user) : null;
+}
+
+async function resetProfilePicture(email) {
+  await pool.execute(
+    `UPDATE users
+     SET profile_pic_originalName = ?, profile_pic_id = ?
+     WHERE email = ?`,
+    ['default_pfp.jpg', 'default_pfp.jpg', email]
+  );
+  const user = await findProfileByEmail(email);
+  return user ? toPublicUser(user) : null;
+}
+
 async function authenticate(email, password) {
   const user = await findByEmail(email);
   if (!user || typeof user.password !== 'string') {
@@ -66,4 +97,12 @@ function toPublicUser(user) {
   };
 }
 
-module.exports = { findByEmail, createUser, findById, authenticate };
+module.exports = {
+  findByEmail,
+  createUser,
+  findById,
+  findProfileByEmail,
+  updateProfilePicture,
+  resetProfilePicture,
+  authenticate
+};
