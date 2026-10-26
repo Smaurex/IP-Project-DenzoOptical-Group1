@@ -11,6 +11,8 @@ const authRoutes = require('./routes/auth.routes');
 const usersRoutes = require('./routes/users.routes');
 const itemsRoutes = require('./routes/items.routes');
 const announcementsRoutes = require('./routes/announcements.routes');
+const aboutRoutes = require('./routes/about.routes');
+const credentialsRoutes = require('./routes/credentials.routes');
 
 const app = express();
 
@@ -27,6 +29,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/items', itemsRoutes);
 app.use('/api/announcements', announcementsRoutes);
+app.use('/api/about', aboutRoutes);
+app.use('/api/credentials', credentialsRoutes);
 
 app.get('/api/health', async (req, res) => {
   try {
