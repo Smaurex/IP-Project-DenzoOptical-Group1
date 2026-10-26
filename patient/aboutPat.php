@@ -1,37 +1,29 @@
 <?php
     include "../hf/headernav.php";
 ?>
-
-
-<?php
-    include "../includes/dbh.inc.php";
-    include "../includes/functions.inc.php";
-
-    $aboutID = 1; 
-    $dataAssocArray = getAboutData($conn, $aboutID);
-?>
 <title>About us</title>
 <main class="centerbodyAbout">
+    <div class="error" id="aboutApiError" role="alert"></div>
     <section class="about-row-top">
-        <img id="about-header-img"src="../uploads/<?php echo $dataAssocArray['headerImgName_id'];?>" class="header-img-patient">
+        <img id="about-header-img" class="header-img-patient" alt="Clinic header">
     </section>
     <section class="about-row-mid">
         <div  class="doctor-img-patient">
-            <img id="about-doctor-img"src="../uploads/<?php echo $dataAssocArray['doctorImgName_id'];?>" class="header-img-patient">
+            <img id="about-doctor-img" class="header-img-patient" alt="Doctor">
         </div>
         <div  class="doctor-content-patient">
             <div class="doctor-content-child">
-                <div><b>Name: </b><?php echo $dataAssocArray['doctorName'];?></div>
-                <div><b>Telephone Number:</b> <?php echo $dataAssocArray['telephone'];?></div>
-                <div><b>Mobile Number:</b> <?php echo $dataAssocArray['mobile'];?></div>
-                <div><b>Gmail:</b> ladyinpinkx45@gmail.com</div>
+                <div><b>Name: </b><span data-about="doctorName"></span></div>
+                <div><b>Telephone Number:</b> <span data-about="telephone"></span></div>
+                <div><b>Mobile Number:</b> <span data-about="mobile"></span></div>
+                <div><b>Gmail:</b> <span data-about="email"></span></div>
             </div>
         </div>
     </section>
     <section class="about-row-bot">
         <div id="doctor-credentials-patient">
             <div class="CredTitle">Credentials</div>
-            <div class="cred-content"><?php echo $dataAssocArray['credentials'];?></div>
+            <div class="cred-content" data-about="credentials"></div>
         </div>
         <div class="MapContainer">
             <div class="map-responsive">
@@ -44,8 +36,10 @@
             </div>
 
             <div id="doctor-address-patient">
-                <div><b>Address:</b> <?php echo $dataAssocArray['address'];?></div>
+                <div><b>Address:</b> <span data-about="address"></span></div>
             </div>
         </div>
     </section>
 </main>
+<script src="../js/api.js"></script>
+<script src="../js/about-profile.js"></script>

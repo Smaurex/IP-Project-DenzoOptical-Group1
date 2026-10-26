@@ -5,10 +5,6 @@
 
 	if(isset($_SESSION["userID"]) && $_SESSION["username"])
 	{
-        $username = $_SESSION["username"];
-        $email = $_SESSION["email"];
-        $role = $_SESSION["role"];
-        $profile_pic = $_SESSION["profile_pic"];
     }
 	else
 	{
@@ -20,15 +16,18 @@
 
     <main class="centerbody">
         <section class="row">
-            <div class="flex-form-profile">
+            <div class="flex-form-profile" id="profile-page">
                 <div id="profile-pic-container">
-                    <img id="pfp_img"src="../profile_pics/<?php echo $_SESSION["profile_pic"];?>">
+                    <img id="pfp_img" src="../profile_pics/default_pfp.jpg" alt="Profile picture">
                 </div>
                 <button type="button" onclick="window.location.href='change_profile_pic.php'">Change profile</button>
-                <div style="display: flex;"><?php echo $username?></div>
-                <div style="display: flex;"><?php echo $email?></div>
-                <div style="display: flex; color: #38E54D;"><?php echo $role?></div>
+                <div style="display: flex;" data-profile="username"></div>
+                <div style="display: flex;" data-profile="email"></div>
+                <div style="display: flex; color: #38E54D;" data-profile="role"></div>
+                <div class="error" id="profileApiError" role="alert"></div>
             </div>
         </section>
     </main>
 
+<script src="../js/api.js"></script>
+<script src="../js/about-profile.js"></script>
