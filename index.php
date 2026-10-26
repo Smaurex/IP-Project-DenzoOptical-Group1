@@ -1,7 +1,5 @@
 <?php
     session_start();
-    require_once 'includes/dbh.inc.php';
-    require_once 'includes/functions.inc.php';
 ?>
 
 <!DOCTYPE html>
@@ -83,49 +81,8 @@
 
     <main class="centerbody">
         <section class="row-patient">    
-            <div class="flex-container-patient" style="width: 66vw;">
-            <?php
-                $sql = "SELECT * FROM item";
-                $result = mysqli_query($conn, $sql);
-
-                if ($result && mysqli_num_rows($result) > 0) {
-                    $items = mysqli_fetch_all($result, MYSQLI_ASSOC); // Get all rows as associative array
-
-                    foreach ($items as $item) {
-                        $itemID = $item['itemID'];
-                        $itemQty = $item['quantity'];
-                        $itemImg = $item['item_pic_id'];
-
-                        echo "
-                            <div class='item-card' id='$itemID'>
-                                <div style='height: 70%'class='item-content-img'>
-                                    <img style='display: flex; height: 100%; height: 100%;flex: 1 1 0;' src='item_pics/$itemImg' alt='$itemID'>
-                                </div>
-                                <div style='height: 15%'class='item-content'>
-                                    <div>
-                                        <p>Item ID: $itemID</p>
-                                        <p>Quantity: $itemQty</p>
-                                    </div>";
-                                    
-                                    if($itemQty != 0){
-                                      echo  "<p style='color: green;'>available</p>";
-                                    }
-                                    else{
-                                      echo  "<p style='color: red;'>unavailable</p>";
-                                    }
-                             echo "
-                             </div>
-                                <div style='height: 15%'class='item-content'>
-                                    
-                                   
-                                </div>
-                            </div>
-                        ";
-                    }
-                } else {
-                    echo "<p>No items found.</p>";
-                }
-            ?>
+            <div class="error" id="itemApiError" role="alert"></div>
+            <div class="flex-container-patient" style="width: 66vw;" data-item-view="public" data-image-base="item_pics/">
             </div>
         </section>
     </main>
@@ -154,7 +111,6 @@
             </footer>
     </div>
 
-</body>
 <script>
     //nav
         function showSidebar() {
@@ -165,4 +121,7 @@
             document.querySelector('.sidebar').classList.remove('active');
         }
 </script>
+<script src="js/api.js"></script>
+<script src="js/items-announcements.js"></script>
+</body>
 </html>

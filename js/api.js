@@ -4,13 +4,19 @@ const API_BASE = window.location.hostname === 'localhost' ||
     : `${window.location.origin}/api`;
 
 async function apiRequest(path, options = {}) {
+    const headers = { ...options.headers };
+    const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
+    if (isFormData) {
+        delete headers['Content-Type'];
+        delete headers['content-type'];
+    } else if (options.body !== undefined) {
+        headers['Content-Type'] = headers['Content-Type'] || 'application/json';
+    }
+
     const response = await fetch(`${API_BASE}${path}`, {
         ...options,
         credentials: 'include',
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
+        headers
     });
 
     let result;
