@@ -11,7 +11,7 @@
                 </div>
             </div>
             <div class="flex-container">
-                <form class="flex-form" id="formSignup" action="../includes/sign_up.inc.php" method="post">
+                <form class="flex-form" id="formSignup" method="post">
                     <h3> Sign up! </h3>
                     <div class="input-control">
                         <label for="fname"><b>First Name</b></label>
@@ -92,4 +92,5 @@
   
     }
 </script>
-
+<script src="../js/api.js"></script>
+<script src="../signup.js"></script>

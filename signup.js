@@ -13,15 +13,27 @@ clear.addEventListener('click', e => {
     }
 });
 
-form.addEventListener('submit', e => {
-    console.log("Form submit triggered");
-    e.preventDefault(); // Prevent default submission
+form.addEventListener('submit', async e => {
+    e.preventDefault();
 
-    if (validateUserInput()) {
-        console.log("Validation passed. Submitting form...");
-        form.submit(); // Submit form manually after validation
-    } else {
-        console.log("Validation failed.");
+    if (!validateUserInput()) {
+        return;
+    }
+
+    try {
+        await window.apiRequest('/auth/register', {
+            method: 'POST',
+            body: JSON.stringify({
+                fname: fname.value,
+                lname: lname.value,
+                email: email.value,
+                password: pass.value,
+                passwordConfirm: passConf.value
+            })
+        });
+        window.location.href = 'log_in.php';
+    } catch (error) {
+        setError(email, error.message);
     }
 });
 
