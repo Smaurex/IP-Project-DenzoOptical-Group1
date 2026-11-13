@@ -1,5 +1,13 @@
 const router = require('express').Router();
+const path = require('node:path');
+const controller = require('../controllers/profileController');
+const imageUpload = require('../middleware/upload');
+const { authenticate } = require('../middleware/auth');
 
-router.get('/', (_req, res) => res.status(501).json({ error: 'Profile API is not implemented yet' }));
+const profileUpload = imageUpload(path.resolve(process.env.PROFILE_UPLOAD_DIR || 'profile_pics'));
+
+router.use(authenticate);
+router.get('/', controller.me);
+router.patch('/image', profileUpload.single('image'), controller.updateImage);
 
 module.exports = router;
