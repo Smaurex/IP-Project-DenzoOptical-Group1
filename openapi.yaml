@@ -38,14 +38,18 @@ paths:
   /api/auth/login:
     post:
       tags: [Authentication]
-      summary: Log in and receive an HttpOnly cookie
+      summary: Log in and receive a bearer token and HttpOnly cookie
       requestBody:
         required: true
         content:
           application/json:
             schema: { $ref: '#/components/schemas/LoginRequest' }
       responses:
-        '200': { description: Logged in }
+        '200':
+          description: Logged in
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LoginResponse' }
         '401': { description: Incorrect login information }
   /api/auth/logout:
     post:
@@ -208,6 +212,18 @@ components:
       properties:
         email: { type: string, format: email }
         password: { type: string, format: password }
+    LoginResponse:
+      type: object
+      required: [token, user]
+      properties:
+        token: { type: string, description: JWT bearer token }
+        user:
+          type: object
+          properties:
+            userID: { type: integer }
+            username: { type: string }
+            email: { type: string, format: email }
+            role: { type: string }
     ImageForm:
       type: object
       required: [image]

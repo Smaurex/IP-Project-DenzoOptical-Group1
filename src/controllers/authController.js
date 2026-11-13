@@ -55,7 +55,10 @@ async function login(req, res, next) {
 
     const token = issueToken(user);
     setTokenCookie(res, token);
-    return res.json({ user: { userID: user.userID, username: user.username, email: user.email, role: user.role } });
+    return res.json({
+      token,
+      user: { userID: user.userID, username: user.username, email: user.email, role: user.role },
+    });
   } catch (error) {
     return next(error);
   }
