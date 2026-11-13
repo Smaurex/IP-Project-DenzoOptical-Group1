@@ -18,7 +18,7 @@ test('migration has no PHP runtime files', () => {
 });
 
 test('migration uses the expected Express structure', () => {
-  for (const relativePath of ['server.js', 'src/app.js', 'src/config/db.js', 'src/routes', 'src/controllers', 'src/middleware', 'public/index.html']) {
+  for (const relativePath of ['server.js', 'src/app.js', 'src/config/db.js', 'src/routes', 'src/controllers', 'src/middleware', 'public/index.html', 'public/js/api.js', 'public/js/pages.js', 'public/pages/patient/index.html', 'public/pages/doctor/index.html', 'public/pages/assistant/index.html', 'openapi.yaml']) {
     assert.equal(fs.existsSync(path.join(root, relativePath)), true, relativePath);
   }
 });
