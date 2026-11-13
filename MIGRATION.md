@@ -15,6 +15,15 @@ The health endpoint is `GET /api/health`. The API provides authentication,
 items, announcements, about content, and profile image operations. Browser
 requests use an HttpOnly JWT cookie; API clients may use a bearer token.
 
+## Frontend and API documentation
+
+The recovered pages are static HTML under `public/pages/` and reuse the original
+`style.css`, images, fonts, and page layout. Their browser scripts call the
+existing Express endpoints without changing the original roles or workflows.
+
+Scalar API documentation is available at `/docs`; its OpenAPI source is
+`/openapi.yaml`.
+
 ## Verification
 
 Run `npm run check` and `npm test`, then smoke-test health, registration, login,
