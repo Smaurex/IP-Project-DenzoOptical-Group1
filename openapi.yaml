@@ -1,0 +1,245 @@
+openapi: 3.0.3
+info:
+  title: Denzo Optical API
+  version: 1.0.0
+  description: API for the Denzo Optical customer and inventory pages.
+servers:
+  - url: http://localhost:3000
+tags:
+  - name: Health
+  - name: Authentication
+  - name: Items
+  - name: Content
+  - name: Profile
+paths:
+  /api/health:
+    get:
+      tags: [Health]
+      summary: Check that the Express server is running
+      responses:
+        '200':
+          description: Server is healthy
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Health' }
+  /api/auth/register:
+    post:
+      tags: [Authentication]
+      summary: Register a patient account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RegisterRequest' }
+      responses:
+        '201': { description: Account created }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '409': { description: Email already registered }
+  /api/auth/login:
+    post:
+      tags: [Authentication]
+      summary: Log in and receive a bearer token and HttpOnly cookie
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LoginRequest' }
+      responses:
+        '200':
+          description: Logged in
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LoginResponse' }
+        '401': { description: Incorrect login information }
+  /api/auth/logout:
+    post:
+      tags: [Authentication]
+      summary: Clear the login cookie
+      responses: { '204': { description: Logged out } }
+  /api/auth/status:
+    get:
+      tags: [Authentication]
+      security: [{ bearerAuth: [] }]
+      summary: Get the current authenticated user
+      responses:
+        '200': { description: Authenticated user }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /api/items:
+    get:
+      tags: [Items]
+      summary: List optical items
+      responses: { '200': { description: Item list } }
+    post:
+      tags: [Items]
+      security: [{ bearerAuth: [] }]
+      summary: Add an item (doctor or assistant)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema: { $ref: '#/components/schemas/ItemForm' }
+      responses:
+        '201': { description: Item created }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /api/items/{itemID}/quantity:
+    patch:
+      tags: [Items]
+      security: [{ bearerAuth: [] }]
+      summary: Update item quantity
+      parameters: [{ $ref: '#/components/parameters/itemID' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [quantity], properties: { quantity: { type: integer, minimum: 0 } } }
+      responses: { '204': { description: Quantity updated } }
+  /api/items/{itemID}/image:
+    patch:
+      tags: [Items]
+      security: [{ bearerAuth: [] }]
+      summary: Replace an item image
+      parameters: [{ $ref: '#/components/parameters/itemID' }]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema: { $ref: '#/components/schemas/ImageForm' }
+      responses: { '204': { description: Image updated } }
+  /api/items/{itemID}:
+    delete:
+      tags: [Items]
+      security: [{ bearerAuth: [] }]
+      summary: Delete an item
+      parameters: [{ $ref: '#/components/parameters/itemID' }]
+      responses: { '204': { description: Item deleted } }
+  /api/announcements:
+    get:
+      tags: [Content]
+      summary: List announcements
+      responses: { '200': { description: Announcement list } }
+    post:
+      tags: [Content]
+      security: [{ bearerAuth: [] }]
+      summary: Create an announcement (doctor only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [message], properties: { message: { type: string } } }
+      responses: { '201': { description: Announcement created } }
+  /api/about:
+    get:
+      tags: [Content]
+      summary: Get clinic information
+      responses: { '200': { description: About data } }
+    patch:
+      tags: [Content]
+      security: [{ bearerAuth: [] }]
+      summary: Update clinic information (doctor only)
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AboutRequest' }
+      responses: { '204': { description: About data updated } }
+  /api/about/images/{kind}:
+    patch:
+      tags: [Content]
+      security: [{ bearerAuth: [] }]
+      summary: Update the header or doctor image
+      parameters:
+        - name: kind
+          in: path
+          required: true
+          schema: { type: string, enum: [header, doctor] }
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema: { $ref: '#/components/schemas/ImageForm' }
+      responses: { '204': { description: Image updated } }
+  /api/profile:
+    get:
+      tags: [Profile]
+      security: [{ bearerAuth: [] }]
+      summary: Get the current profile
+      responses: { '200': { description: Profile data } }
+  /api/profile/image:
+    patch:
+      tags: [Profile]
+      security: [{ bearerAuth: [] }]
+      summary: Update the current profile image
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema: { $ref: '#/components/schemas/ImageForm' }
+      responses: { '200': { description: Profile image updated } }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    itemID:
+      name: itemID
+      in: path
+      required: true
+      schema: { type: integer }
+  responses:
+    BadRequest:
+      description: Invalid request
+    Unauthorized:
+      description: Authentication required
+    Forbidden:
+      description: Insufficient role
+  schemas:
+    Health:
+      type: object
+      properties: { status: { type: string, example: ok } }
+    RegisterRequest:
+      type: object
+      required: [fname, lname, email, password, passwordConfirmation]
+      properties:
+        fname: { type: string }
+        lname: { type: string }
+        email: { type: string, format: email }
+        password: { type: string, format: password }
+        passwordConfirmation: { type: string, format: password }
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, format: password }
+    LoginResponse:
+      type: object
+      required: [token, user]
+      properties:
+        token: { type: string, description: JWT bearer token }
+        user:
+          type: object
+          properties:
+            userID: { type: integer }
+            username: { type: string }
+            email: { type: string, format: email }
+            role: { type: string }
+    ImageForm:
+      type: object
+      required: [image]
+      properties:
+        image: { type: string, format: binary }
+    ItemForm:
+      allOf:
+        - $ref: '#/components/schemas/ImageForm'
+        - type: object
+          required: [quantity]
+          properties: { quantity: { type: integer, minimum: 0 } }
+    AboutRequest:
+      type: object
+      properties:
+        doctorName: { type: string }
+        mobile: { type: string }
+        telephone: { type: string }
+        address: { type: string }
+        credentials: { type: string }
