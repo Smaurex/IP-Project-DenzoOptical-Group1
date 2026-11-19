@@ -15,7 +15,7 @@ function linksForUser(user) {
   const links = [{ text: 'Home', href: '/' }, { text: 'About us', href: '/pages/patient/about.html' }];
   if (!user) return [...links, { text: 'Sign Up', href: '/pages/register/sign_up.html' }, { text: 'Log In', href: '/pages/register/log_in.html' }];
   links.splice(1, 0, { text: 'Profile', href: '/pages/profile/index.html' }, { text: 'Log out', href: '#', action: 'logout' });
-  if (user.role === 'doctor') links.splice(2, 0, { text: 'Doctor', href: '/pages/doctor/index.html' }, { text: 'About us', href: '/pages/doctor/about.html' });
+  if (user.role === 'doctor') links.splice(2, 0, { text: 'Doctor', href: '/pages/doctor/index.html' }, { text: 'Accounts', href: '/pages/doctor/accounts.html' }, { text: 'About us', href: '/pages/doctor/about.html' });
   if (user.role === 'assistant') links.splice(2, 0, { text: 'Assistant', href: '/pages/assistant/index.html' });
   if (user.role === 'patient') links.splice(2, 0, { text: 'Patient', href: '/pages/patient/index.html' });
   return links;

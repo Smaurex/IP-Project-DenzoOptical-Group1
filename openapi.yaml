@@ -11,6 +11,7 @@ tags:
   - name: Items
   - name: Content
   - name: Profile
+  - name: Users
 paths:
   /api/health:
     get:
@@ -174,6 +175,52 @@ paths:
           multipart/form-data:
             schema: { $ref: '#/components/schemas/ImageForm' }
       responses: { '200': { description: Profile image updated } }
+  /api/users:
+    get:
+      tags: [Users]
+      security: [{ bearerAuth: [] }]
+      summary: List all user accounts (doctor only)
+      responses:
+        '200': { description: List of accounts }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /api/users/{userID}/role:
+    patch:
+      tags: [Users]
+      security: [{ bearerAuth: [] }]
+      summary: Change a user's role to patient, assistant, or doctor (doctor only)
+      parameters: [{ $ref: '#/components/parameters/userID' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [role]
+              properties:
+                role: { type: string, enum: [patient, assistant, doctor] }
+      responses:
+        '200': { description: Role updated }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /api/users/{userID}/status:
+    patch:
+      tags: [Users]
+      security: [{ bearerAuth: [] }]
+      summary: Activate or deactivate a user account without deleting it (doctor only)
+      parameters: [{ $ref: '#/components/parameters/userID' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status: { type: string, enum: [active, deactivated] }
+      responses:
+        '200': { description: Account status updated }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '403': { $ref: '#/components/responses/Forbidden' }
 components:
   securitySchemes:
     bearerAuth:
@@ -183,6 +230,11 @@ components:
   parameters:
     itemID:
       name: itemID
+      in: path
+      required: true
+      schema: { type: integer }
+    userID:
+      name: userID
       in: path
       required: true
       schema: { type: integer }
