@@ -50,14 +50,24 @@ async function login(req, res, next) {
 
     const [rows] = await db.execute('SELECT * FROM users WHERE email = ?', [email.trim().toLowerCase()]);
     const user = rows[0];
-    const valid = user && await bcrypt.compare(password, user.password.replace(/^\$2y\$/, '$2a$'));
+    let valid = false;
+    if (user) {
+      if (user.password.startsWith('$2y$') || user.password.startsWith('$2a$') || user.password.startsWith('$2b$')) {
+        valid = await bcrypt.compare(password, user.password.replace(/^\$2y\$/, '$2a$'));
+      } else {
+        valid = password === user.password;
+      }
+    }
     if (!valid) return res.status(401).json({ error: 'Incorrect login information' });
+    if (user.status === 'deactivated') {
+      return res.status(403).json({ error: 'Your account has been deactivated. Please contact the clinic doctor.' });
+    }
 
     const token = issueToken(user);
     setTokenCookie(res, token);
     return res.json({
       token,
-      user: { userID: user.userID, username: user.username, email: user.email, role: user.role },
+      user: { userID: user.userID, username: user.username, email: user.email, role: user.role, status: user.status || 'active' },
     });
   } catch (error) {
     return next(error);

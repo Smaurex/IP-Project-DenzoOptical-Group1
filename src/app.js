@@ -7,6 +7,7 @@ const authRoutes = require('./routes/authRoutes');
 const itemRoutes = require('./routes/itemRoutes');
 const contentRoutes = require('./routes/contentRoutes');
 const profileRoutes = require('./routes/profileRoutes');
+const userRoutes = require('./routes/userRoutes');
 const { notFound, errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
@@ -33,6 +34,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/items', itemRoutes);
 app.use('/api', contentRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/users', userRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

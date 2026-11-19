@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Account Management - Denzo Optical</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="https://kit.fontawesome.com/ef8f49099c.js" crossorigin="anonymous"></script>
+</head>
+<body data-page="doctor-accounts">
+  <main class="centerbody">
+    <section class="accounts-management-container">
+      <div class="accounts-header">
+        <div>
+          <h2>Account Management</h2>
+          <p class="accounts-subtitle">Manage user roles (Patient, Assistant, Doctor) and activate or deactivate accounts.</p>
+        </div>
+        <div class="accounts-filters">
+          <input type="search" id="account-search" placeholder="Search by name or email..." aria-label="Search accounts">
+          <select id="account-role-filter" aria-label="Filter by role">
+            <option value="all">All Roles</option>
+            <option value="doctor">Doctor</option>
+            <option value="assistant">Assistant</option>
+            <option value="patient">Patient</option>
+          </select>
+          <select id="account-status-filter" aria-label="Filter by status">
+            <option value="all">All Statuses</option>
+            <option value="active">Active</option>
+            <option value="deactivated">Deactivated</option>
+          </select>
+        </div>
+      </div>
+
+      <p data-api-error class="error"></p>
+      <p data-api-success class="accounts-success"></p>
+
+      <div class="accounts-table-wrapper">
+        <table class="accounts-table">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody data-accounts-list>
+            <tr><td colspan="5" class="centerText">Loading accounts...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <script src="/js/api.js"></script>
+  <script src="/js/site.js"></script>
+  <script src="/js/pages.js"></script>
+</body>
+</html>
+

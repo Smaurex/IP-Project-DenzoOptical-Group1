@@ -2002,4 +2002,232 @@ span.error {
   }
 }
 
+/* Account Management (Doctor) */
+.accounts-management-container {
+  width: 95%;
+  max-width: 1150px;
+  margin: 1.5rem auto;
+  padding: 1.5rem;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.accounts-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f2e4ec;
+}
+
+.accounts-header h2 {
+  color: #AC1754;
+  margin-bottom: 0.25rem;
+}
+
+.accounts-subtitle {
+  color: #666;
+  font-size: 0.92rem;
+}
+
+.accounts-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.accounts-filters input,
+.accounts-filters select {
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  background-color: #fff;
+}
+
+.accounts-filters input:focus,
+.accounts-filters select:focus {
+  outline: none;
+  border-color: #E53888;
+}
+
+.accounts-success {
+  color: #1e7e34;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.accounts-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.accounts-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+.accounts-table th {
+  background-color: #fdf2f7;
+  color: #AC1754;
+  font-weight: 700;
+  padding: 0.85rem 0.75rem;
+  border-bottom: 2px solid #f0cde0;
+}
+
+.accounts-table td {
+  padding: 0.8rem 0.75rem;
+  border-bottom: 1px solid #eee;
+  vertical-align: middle;
+}
+
+.accounts-table tr:hover {
+  background-color: #fafafa;
+}
+
+.account-row-deactivated {
+  background-color: #fff8f8;
+  opacity: 0.82;
+}
+
+.account-user-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.account-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #E53888;
+  flex-shrink: 0;
+}
+
+.account-username {
+  font-weight: 600;
+  color: #222;
+}
+
+.account-self-tag {
+  font-size: 0.8rem;
+  color: #AC1754;
+  font-weight: 700;
+}
+
+.account-id {
+  font-size: 0.78rem;
+  color: #777;
+}
+
+.role-badge,
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.role-badge-doctor {
+  background-color: #fce4ef;
+  color: #AC1754;
+}
+
+.role-badge-assistant {
+  background-color: #e6f2ff;
+  color: #0056b3;
+}
+
+.role-badge-patient {
+  background-color: #f0f0f0;
+  color: #444;
+}
+
+.status-badge-active {
+  background-color: #e6f9ed;
+  color: #1b7f3b;
+}
+
+.status-badge-deactivated {
+  background-color: #fde8e8;
+  color: #c0392b;
+}
+
+.account-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.account-role-form {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.account-role-form select {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  background-color: #fff;
+}
+
+.btn-role-save,
+.btn-status-toggle {
+  padding: 0.42rem 0.75rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  color: #fff;
+}
+
+.btn-role-save {
+  background-color: #AC1754;
+}
+
+.btn-role-save:hover {
+  background-color: #8c1244;
+}
+
+.btn-status-deactivate {
+  background-color: #e74c3c;
+}
+
+.btn-status-deactivate:hover {
+  background-color: #c0392b;
+}
+
+.btn-status-activate {
+  background-color: #2ecc71;
+}
+
+.btn-status-activate:hover {
+  background-color: #27ae60;
+}
+
+.account-protected-note {
+  font-size: 0.85rem;
+  color: #777;
+  font-style: italic;
+}
+
+
 

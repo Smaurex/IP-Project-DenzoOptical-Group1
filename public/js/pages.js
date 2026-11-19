@@ -1,4 +1,24 @@
-function setPageError(error) { showError(document.querySelector('[data-api-error]'), error); }
+function setPageError(error) {
+  const successEl = document.querySelector('[data-api-success]');
+  if (successEl) successEl.textContent = '';
+  showError(document.querySelector('[data-api-error]'), error);
+}
+
+function setPageSuccess(message) {
+  const errorEl = document.querySelector('[data-api-error]');
+  if (errorEl) errorEl.textContent = '';
+  const successEl = document.querySelector('[data-api-success]');
+  if (successEl) successEl.textContent = message;
+}
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
 
 function itemCard(item, manage) {
   const availability = item.quantity ? '<p style="color: green;">available</p>' : '<p style="color: red;">unavailable</p>';
@@ -60,12 +80,141 @@ function bindProfileImage() {
   form.addEventListener('submit', async (event) => { event.preventDefault(); const body = new FormData(); body.append('image', form.querySelector('input[type=file]').files[0]); try { const data = await apiRequest('/profile/image', { method: 'PATCH', body }); document.querySelector('#pfp_img').src = `/profile_pics/${encodeURIComponent(data.profile_pic_id)}`; } catch (error) { setPageError(error); } });
 }
 
+let cachedAccounts = [];
+let currentLoggedUser = null;
+
+function accountRow(account, currentUserID) {
+  const isSelf = Number(account.userID) === Number(currentUserID);
+  const role = ['patient', 'assistant', 'doctor'].includes(account.role) ? account.role : 'patient';
+  const status = account.status === 'deactivated' ? 'deactivated' : 'active';
+  const isDeactivated = status === 'deactivated';
+  const nextStatus = isDeactivated ? 'active' : 'deactivated';
+  const toggleLabel = isDeactivated ? 'Activate' : 'Deactivate';
+  const toggleClass = isDeactivated ? 'btn-status-activate' : 'btn-status-deactivate';
+  const avatar = account.profile_pic_id ? `/profile_pics/${encodeURIComponent(account.profile_pic_id)}` : '/profile_pics/default_pfp.jpg';
+
+  return `<tr data-user-id="${account.userID}" class="${isDeactivated ? 'account-row-deactivated' : ''}">
+    <td>
+      <div class="account-user-cell">
+        <img class="account-avatar" src="${avatar}" alt="${escapeHtml(account.username)}" onerror="this.src='/profile_pics/default_pfp.jpg'">
+        <div>
+          <div class="account-username">${escapeHtml(account.username)} ${isSelf ? '<span class="account-self-tag">(You)</span>' : ''}</div>
+          <div class="account-id">ID #${account.userID}</div>
+        </div>
+      </div>
+    </td>
+    <td>${escapeHtml(account.email)}</td>
+    <td>
+      <span class="role-badge role-badge-${role}">${escapeHtml(role)}</span>
+    </td>
+    <td>
+      <span class="status-badge status-badge-${status}">${isDeactivated ? 'Deactivated' : 'Active'}</span>
+    </td>
+    <td>
+      ${isSelf ? '<span class="account-protected-note">Current doctor account</span>' : `
+        <div class="account-actions">
+          <form class="account-role-form" data-role-form>
+            <select name="role" aria-label="Change role for ${escapeHtml(account.username)}">
+              <option value="patient" ${role === 'patient' ? 'selected' : ''}>Patient</option>
+              <option value="assistant" ${role === 'assistant' ? 'selected' : ''}>Assistant</option>
+              <option value="doctor" ${role === 'doctor' ? 'selected' : ''}>Doctor</option>
+            </select>
+            <button type="submit" class="btn-role-save">Update Role</button>
+          </form>
+          <button type="button" class="btn-status-toggle ${toggleClass}" data-toggle-status="${nextStatus}">
+            ${toggleLabel}
+          </button>
+        </div>
+      `}
+    </td>
+  </tr>`;
+}
+
+function renderAccountsList() {
+  const tbody = document.querySelector('[data-accounts-list]');
+  if (!tbody) return;
+
+  const search = (document.querySelector('#account-search')?.value || '').trim().toLowerCase();
+  const roleFilter = document.querySelector('#account-role-filter')?.value || 'all';
+  const statusFilter = document.querySelector('#account-status-filter')?.value || 'all';
+
+  const filtered = cachedAccounts.filter((acc) => {
+    const role = acc.role || 'patient';
+    const status = acc.status || 'active';
+    const matchesSearch = !search
+      || String(acc.username || '').toLowerCase().includes(search)
+      || String(acc.email || '').toLowerCase().includes(search)
+      || String(acc.userID).includes(search);
+    const matchesRole = roleFilter === 'all' || role === roleFilter;
+    const matchesStatus = statusFilter === 'all' || status === statusFilter;
+    return matchesSearch && matchesRole && matchesStatus;
+  });
+
+  if (!filtered.length) {
+    tbody.innerHTML = '<tr><td colspan="5" class="centerText">No matching accounts found.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = filtered.map((acc) => accountRow(acc, currentLoggedUser?.userID)).join('');
+  bindAccountActions(tbody);
+}
+
+function bindAccountActions(tbody) {
+  tbody.querySelectorAll('[data-role-form]').forEach((form) => {
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const userID = form.closest('[data-user-id]').dataset.userId;
+      const role = form.elements.role.value;
+      try {
+        await apiRequest(`/users/${userID}/role`, { method: 'PATCH', body: { role } });
+        setPageSuccess(`Updated user #${userID} role to ${role}.`);
+        await loadAccounts();
+      } catch (error) {
+        setPageError(error);
+      }
+    });
+  });
+
+  tbody.querySelectorAll('[data-toggle-status]').forEach((button) => {
+    button.addEventListener('click', async () => {
+      const userID = button.closest('[data-user-id]').dataset.userId;
+      const status = button.dataset.toggleStatus;
+      try {
+        await apiRequest(`/users/${userID}/status`, { method: 'PATCH', body: { status } });
+        setPageSuccess(`Account #${userID} is now ${status}.`);
+        await loadAccounts();
+      } catch (error) {
+        setPageError(error);
+      }
+    });
+  });
+}
+
+async function loadAccounts() {
+  const tbody = document.querySelector('[data-accounts-list]');
+  if (!tbody) return;
+  try {
+    const { users } = await apiRequest('/users');
+    cachedAccounts = users || [];
+    renderAccountsList();
+  } catch (error) {
+    setPageError(error);
+  }
+}
+
+function bindAccountFilters() {
+  document.querySelector('#account-search')?.addEventListener('input', renderAccountsList);
+  document.querySelector('#account-role-filter')?.addEventListener('change', renderAccountsList);
+  document.querySelector('#account-status-filter')?.addEventListener('change', renderAccountsList);
+}
+
 async function bindPage() {
-  await loadShell();
+  currentLoggedUser = await loadShell();
   const page = document.body.dataset.page;
   bindAuthForms();
   if (['home', 'patient'].includes(page)) { loadItems(false); loadAnnouncements(); }
   if (['doctor', 'assistant'].includes(page)) { loadItems(true); loadAnnouncements(); }
+  if (page === 'doctor-accounts') { bindAccountFilters(); loadAccounts(); }
   if (page === 'about') loadAbout(true);
   if (page === 'about-editor') { loadAbout(false); bindDoctorAbout(); }
   if (page === 'profile') { loadProfile(); bindProfileImage(); }

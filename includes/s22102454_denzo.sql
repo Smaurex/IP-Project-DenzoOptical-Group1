@@ -119,6 +119,7 @@ CREATE TABLE `users` (
   `email` varchar(100) NOT NULL,
   `password` varchar(100) NOT NULL,
   `role` varchar(30) NOT NULL,
+  `status` varchar(20) NOT NULL DEFAULT 'active',
   `profile_pic_originalName` varchar(255) NOT NULL,
   `profile_pic_id` varchar(255) NOT NULL,
   `verification_token` varchar(255) DEFAULT NULL
